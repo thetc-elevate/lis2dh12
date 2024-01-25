@@ -9,8 +9,7 @@ use accelerometer::{Error, ErrorKind, RawAccelerometer};
 use cast::u16;
 #[cfg(feature = "out_f32")]
 use cast::{f32, i16};
-use embedded_hal as hal;
-use hal::blocking::i2c::{Write, WriteRead};
+use embedded_hal::i2c::{ErrorType, I2c};
 #[cfg(feature = "out_f32")]
 use num_traits::FromPrimitive;
 
@@ -35,7 +34,7 @@ pub struct Int<'a, REG, I2C> {
 
 impl<I2C, E> Lis2dh12<I2C>
 where
-    I2C: WriteRead<Error = E> + Write<Error = E>,
+    I2C: I2c + ErrorType<Error = E>,
     E: Debug,
 {
     /// Create a new `LIS2DH12` driver from the given `I2C` peripheral
@@ -634,7 +633,7 @@ where
 
 impl<I2C, E> RawAccelerometer<I16x3> for Lis2dh12<I2C>
 where
-    I2C: WriteRead<Error = E> + Write<Error = E>,
+    I2C: I2c + ErrorType<Error = E>,
     E: Debug,
 {
     type Error = E;
@@ -700,7 +699,7 @@ where
 impl<'a, REG, I2C, E> Int<'a, REG, I2C>
 where
     REG: IntRegs,
-    I2C: WriteRead<Error = E> + Write<Error = E>,
+    I2C: I2c + ErrorType<Error = E>,
     E: Debug,
 {
     fn new(dev: &'a mut Lis2dh12<I2C>) -> Self {
